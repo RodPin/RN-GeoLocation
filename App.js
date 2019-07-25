@@ -10,6 +10,9 @@ import React, {Component} from 'react';
 import {Button, View, Text} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import Permissions from 'react-native-permissions';
+import firebaseConfig from './firebaseConfig'
+import firebase from 'firebase';
+
 class App extends Component {
   constructor() {
     super();
@@ -19,12 +22,25 @@ class App extends Component {
       count:0
     };
   }
+
+  pushToFirebase(json){
+    firebase
+    .database()
+    .ref()
+    .child("location/")
+    .set(json)
+  }
+
+  componentWillMount(){
+    firebase.initializeApp(firebaseConfig);
+  }
+
   componentDidMount() {
     Permissions.request('location').then(response => {
       // Returns once the user has chosen to 'allow' or to 'not allow' access
       // Response is one of: 'authorized', 'denied', 'restricted', or 'undetermined'
       this.setState({hasLocationPermission: response});
-    });
+    })
 
     // Instead of navigator.geolocation, just use Geolocation.
   }
@@ -63,6 +79,7 @@ class App extends Component {
                   long: coords.longitude,
                   count:this.state.count+1
                 });
+                this.pushToFirebase({lat: coords.latitude,long: coords.longitude})
               },
               error => {
                 // See error code charts below.
@@ -73,6 +90,7 @@ class App extends Component {
             );
           }}
         />
+         
         <Text style={{fontSize: 24}}>lat: {lat}</Text>
         <Text style={{fontSize: 24}}>lat: {long}</Text>
         <Text style={{fontSize: 24}}>count: {count}</Text>
