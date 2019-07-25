@@ -15,7 +15,8 @@ class App extends Component {
     super();
     this.state = {
       lat: null,
-      long: null
+      long: null,error:null,
+      count:0
     };
   }
   componentDidMount() {
@@ -29,7 +30,7 @@ class App extends Component {
   }
 
   render() {
-    const {lat, long} = this.state;
+    const {lat, long,error,count} = this.state;
     return (
       <View style={{flex: 1, backgroundColor: 'grey'}}>
         <Button
@@ -47,12 +48,37 @@ class App extends Component {
                 // See error code charts below.
                 console.log(error.code, error.message);
               },
-              {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000}
+              {enableHighAccuracy: true, timeout: 15000,}
+            );
+          }}
+        />
+         <Button
+          title="follow my loc"
+          onPress={() => {
+            Geolocation.watchPosition(
+              position => {
+                const coords = position.coords;
+                this.setState({
+                  lat: coords.latitude,
+                  long: coords.longitude,
+                  count:this.state.count+1
+                });
+              },
+              error => {
+                // See error code charts below.
+                this.setState({error:error.message
+                })
+              },
+              {enableHighAccuracy: true, interval: 10000,distanceFilter:0}
             );
           }}
         />
         <Text style={{fontSize: 24}}>lat: {lat}</Text>
         <Text style={{fontSize: 24}}>lat: {long}</Text>
+        <Text style={{fontSize: 24}}>count: {count}</Text>
+        <Text style={{fontSize:24,color:'red'}}>{error}</Text>
+
+        
       </View>
     );
   }
