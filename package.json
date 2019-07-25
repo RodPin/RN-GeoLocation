@@ -6,7 +6,9 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
-    "android:release": "cd android && ./gradlew assembleRelease"
+    "android:release": "cd android && ./gradlew assembleRelease",
+    "apkw": "cd android/app/build/outputs/apk/release && start .",
+    "apku": "cd android/app/build/outputs/apk/release && xdg-open ."
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.5.1",
