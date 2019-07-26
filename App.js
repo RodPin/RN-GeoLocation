@@ -111,7 +111,7 @@ const App = () => {
       if (confirmedName) {
         getLocation();
       }
-    }, 30000);
+    }, 1800000);
   }, []);
   if (confirmedName) {
     return (
