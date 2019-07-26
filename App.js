@@ -17,7 +17,7 @@ var contador = 0;
 
 const App = () => {
   const [name, setName] = useState(null);
-  const [confirmedName, setConfirmedName] = useState('dddd');
+  const [confirmedName, setConfirmedName] = useState(null);
   const [count, setCount] = useState(0);
   const [latLong, setLatLong] = useState({});
   const [error, setError] = useState(null);
