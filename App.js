@@ -1,16 +1,35 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TextInput, Button} from 'react-native';
+import {View, ScrollView, Text, TextInput, Button} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import Permissions from 'react-native-permissions';
 import firebase from 'firebase';
 import firebaseConfig from './firebaseConfig';
 import BackgroundTimer from 'react-native-background-timer';
-
+import {ListItem, List, Left, Body, Right} from 'native-base';
 var contador = 0;
+
+const obj = {
+  rodrigo: {
+    lat: 23.2342,
+    long: 34.9421
+  },
+  renato: {
+    lat: 23.2342,
+    long: 34.9421
+  },
+  luis: {
+    lat: 23.2342,
+    long: 34.9421
+  },
+  jenifer: {
+    lat: 23.2342,
+    long: 34.9421
+  }
+};
 
 const App = () => {
   const [name, setName] = useState(null);
-  const [confirmedName, setConfirmedName] = useState(null);
+  const [confirmedName, setConfirmedName] = useState('sads');
   const [count, setCount] = useState(0);
   const [latLong, setLatLong] = useState({});
   const [error, setError] = useState(null);
@@ -19,7 +38,7 @@ const App = () => {
     firebase
       .database()
       .ref()
-      .child('location/')
+      .child('location/' + confirmedName)
       .set(json)
       .then(x => alert(x))
       .catch(err => {
@@ -27,6 +46,14 @@ const App = () => {
           setError('Permission denied');
         }
       });
+  }
+  function renderCards() {
+    var aux = [];
+    const names = Object.keys(obj);
+    names.map(name => {
+      aux.push(<Card name={name} lat={obj[name].lat} long={obj[name].long} />);
+    });
+    return aux;
   }
 
   useEffect(() => {
@@ -36,23 +63,26 @@ const App = () => {
     Permissions.request('location').then(response => {
       console.log(response);
     });
+
     BackgroundTimer.setInterval(() => {
       // this will be executed every 200 ms
       // even when app is the the background
-      Geolocation.getCurrentPosition(
-        position => {
-          contador++;
-          const coords = position.coords;
-          setLatLong({lat: coords.latitude, long: coords.longitude});
-          setCount(contador);
-          pushToFirebase({lat: coords.latitude, long: coords.longitude});
-        },
-        error => {
-          // See error code charts below.
-          setError(error.message);
-        },
-        {enableHighAccuracy: true, timeout: 15000}
-      );
+      if (confirmedName) {
+        Geolocation.getCurrentPosition(
+          position => {
+            contador++;
+            const coords = position.coords;
+            setLatLong({lat: coords.latitude, long: coords.longitude});
+            setCount(contador);
+            pushToFirebase({lat: coords.latitude, long: coords.longitude});
+          },
+          error => {
+            // See error code charts below.
+            setError(error.message);
+          },
+          {enableHighAccuracy: true, timeout: 15000}
+        );
+      }
     }, 30000);
   }, []);
   if (confirmedName) {
@@ -61,8 +91,7 @@ const App = () => {
         style={{
           flex: 1,
           padding: 40,
-          backgroundColor: 'grey',
-          alignItems: 'center'
+          backgroundColor: 'grey'
         }}
       >
         <Text style={{fontSize: 30, marginBottom: 30}}>Hi {confirmedName}</Text>
@@ -70,11 +99,12 @@ const App = () => {
         <Text style={{fontSize: 24}}>long: {latLong.long}</Text>
         <Text style={{fontSize: 24}}>i got your location {count} times</Text>
         <Text style={{fontSize: 24, color: 'red'}}>{error}</Text>
+        <List>{renderCards()}</List>
       </View>
     );
   }
   return (
-    <View
+    <ScrollView
       style={{
         flex: 1,
         padding: 30,
@@ -93,8 +123,23 @@ const App = () => {
         color="green"
         onPress={() => setConfirmedName(name)}
       />
-    </View>
+    </ScrollView>
   );
 };
 
 export default App;
+
+const Card = ({name, lat, long}) => (
+  <ListItem>
+    <Left>
+      <Text style={{fontSize: 24, color: 'white'}}>{name}</Text>
+    </Left>
+    <Body>
+      <Text style={{fontSize: 18, color: 'white'}}>lat {lat}</Text>
+      <Text style={{fontSize: 18, color: 'white'}}>long {long}</Text>
+    </Body>
+    <Right>
+      <Text style={{fontSize: 16, color: 'white'}}>HI</Text>
+    </Right>
+  </ListItem>
+);
