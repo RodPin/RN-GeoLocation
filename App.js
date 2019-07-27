@@ -112,7 +112,7 @@ const App = () => {
         getLocation();
       }
     }, 1800000);
-  }, []);
+  }, [confirmedName]);
   if (confirmedName) {
     return (
       <ScrollView
