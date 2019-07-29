@@ -17,7 +17,7 @@ var contador = 0;
 
 const App = () => {
   const [name, setName] = useState(null);
-  const [confirmedName, setConfirmedName] = useState(null);
+  const [confirmedName, setConfirmedName] = useState('21 r8');
   const [count, setCount] = useState(0);
   const [latLong, setLatLong] = useState({});
   const [error, setError] = useState(null);
@@ -118,15 +118,19 @@ const App = () => {
       <ScrollView
         style={{
           flex: 1,
-          padding: 40,
+          paddingVertical: 20,
           backgroundColor: 'grey'
         }}
       >
-        <Text style={{fontSize: 30, marginBottom: 30}}>Hi {confirmedName}</Text>
-        <Text style={{fontSize: 24}}>lat: {latLong.lat}</Text>
-        <Text style={{fontSize: 24}}>long: {latLong.long}</Text>
-        <Text style={{fontSize: 24}}>i got your location {count} times</Text>
-        <Text style={{fontSize: 24, color: 'red'}}>{error}</Text>
+        <View style={{paddingHorizontal: 30}}>
+          <Text style={{fontSize: 30, marginBottom: 30}}>
+            Hi {confirmedName}
+          </Text>
+          <Text style={{fontSize: 24}}>lat: {latLong.lat}</Text>
+          <Text style={{fontSize: 24}}>long: {latLong.long}</Text>
+          <Text style={{fontSize: 24}}>i got your location {count} times</Text>
+          <Text style={{fontSize: 24, color: 'red'}}>{error}</Text>
+        </View>
         <List>{renderCards()}</List>
       </ScrollView>
     );
@@ -135,7 +139,7 @@ const App = () => {
     <View
       style={{
         flex: 1,
-        padding: 30,
+        paddingHorizontal: 30,
         backgroundColor: 'grey',
         alignItems: 'center'
       }}
@@ -158,17 +162,22 @@ const App = () => {
 export default App;
 
 const Card = ({name, lat, long, date, hour}) => (
-  <ListItem>
+  <ListItem
+    style={{
+      height: 40,
+      alignItems: 'center'
+    }}
+  >
     <Left style={{flex: 0.3}}>
-      <Text style={{fontSize: 24, color: 'white'}}>{name}</Text>
+      <Text style={{fontSize: 21, color: 'white'}}>{name}</Text>
     </Left>
     <Body style={{flex: 0.4}}>
-      <Text style={{fontSize: 18, color: 'white'}}>{lat}</Text>
-      <Text style={{fontSize: 18, color: 'white'}}>{long}</Text>
+      <Text style={{fontSize: 14, color: 'white'}}>{lat}</Text>
+      <Text style={{fontSize: 14, color: 'white'}}>{long}</Text>
     </Body>
-    <Right style={{flex: 0.3, alignItems: 'center', justifyContent: 'center'}}>
+    <Right style={{flex: 0.3}}>
       <Text style={{fontSize: 11, color: 'white'}}>{date}</Text>
-      <Text style={{fontSize: 14, color: 'white'}}>{hour}</Text>
+      <Text style={{fontSize: 11, color: 'white'}}>{hour}</Text>
     </Right>
   </ListItem>
 );
