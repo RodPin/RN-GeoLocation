@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {
   View,
   ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   Button,
@@ -13,11 +14,12 @@ import firebase from 'firebase';
 import firebaseConfig from './firebaseConfig';
 import BackgroundTimer from 'react-native-background-timer';
 import {ListItem, List, Left, Body, Right} from 'native-base';
+import MapView, {Marker} from 'react-native-maps';
 var contador = 0;
 
 const App = () => {
   const [name, setName] = useState(null);
-  const [confirmedName, setConfirmedName] = useState('21 r8');
+  const [confirmedName, setConfirmedName] = useState(null);
   const [count, setCount] = useState(0);
   const [latLong, setLatLong] = useState({});
   const [error, setError] = useState(null);
@@ -57,10 +59,26 @@ const App = () => {
         setLoading(false);
       });
   }
-  function renderCards() {
+  function renderMarkers() {
+    var aux = [];
+    if (obj) {
+      {
+        obj.map(person =>
+          aux.push(
+            <Marker
+              coordinate={{latitude: person.data.lat, longitude: person.data.long}}
+              title={person.key}
+            />
+          )
+        );
+      }
+    }
+    return aux;
+  }
+  function renderList() {
     var aux = [];
     if (loading) {
-      return <ActivityIndicator color="white" size="large" />;
+      return <ActivityIndicator color='white' size='large' />;
     }
     if (obj) {
       obj.map(person => {
@@ -104,7 +122,9 @@ const App = () => {
     Permissions.request('location').then(response => {
       console.log(response);
     });
-    getLocation();
+    if (confirmedName) {
+      getLocation();
+    }
     BackgroundTimer.setInterval(() => {
       // this will be executed every 200 ms
       // even when app is the the background
@@ -115,7 +135,7 @@ const App = () => {
   }, [confirmedName]);
   if (confirmedName) {
     return (
-      <ScrollView
+      <View
         style={{
           flex: 1,
           paddingVertical: 20,
@@ -123,16 +143,29 @@ const App = () => {
         }}
       >
         <View style={{paddingHorizontal: 30}}>
-          <Text style={{fontSize: 30, marginBottom: 30}}>
-            Hi {confirmedName}
-          </Text>
+          <Text style={{fontSize: 30, marginBottom: 10}}>Hi {confirmedName}</Text>
           <Text style={{fontSize: 24}}>lat: {latLong.lat}</Text>
           <Text style={{fontSize: 24}}>long: {latLong.long}</Text>
           <Text style={{fontSize: 24}}>i got your location {count} times</Text>
           <Text style={{fontSize: 24, color: 'red'}}>{error}</Text>
         </View>
-        <List>{renderCards()}</List>
-      </ScrollView>
+        <View style={{width: '100%', height: '50%'}}>
+          <MapView
+            style={styles.map}
+            initialRegion={{
+              latitude: -22.98825,
+              longitude: -43.17,
+              latitudeDelta: 0.5,
+              longitudeDelta: 0.5
+            }}
+          >
+            {renderMarkers()}
+          </MapView>
+        </View>
+        <ScrollView>
+          <List>{renderList()}</List>
+        </ScrollView>
+      </View>
     );
   }
   return (
@@ -150,11 +183,7 @@ const App = () => {
         onChangeText={text => setName(text)}
         style={{width: 180, backgroundColor: 'white', marginBottom: 40}}
       />
-      <Button
-        title="Confirm"
-        color="green"
-        onPress={() => setConfirmedName(name)}
-      />
+      <Button title='Confirm' color='green' onPress={() => setConfirmedName(name)} />
     </View>
   );
 };
@@ -181,3 +210,13 @@ const Card = ({name, lat, long, date, hour}) => (
     </Right>
   </ListItem>
 );
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+
+    backgroundColor: 'red'
+  },
+
+  map: {flex: 1}
+});
