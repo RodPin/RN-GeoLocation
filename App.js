@@ -29,7 +29,7 @@ const App = () => {
   function pushToFirebase(json) {
     const now = new Date();
     const hour = now.getHours() + ':' + now.getMinutes();
-    const date = now.getDate() + '/' + now.getMonth() + 1 + '/' + now.getFullYear();
+    const date = now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear();
     json = {...json, hour, date};
     firebase
       .database()
