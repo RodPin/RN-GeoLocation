@@ -16,7 +16,7 @@ I'm hiding my api keys so to make this work you should make yours.
 
 get a google maps api key : https://developers.google.com/maps/documentation/android-api/signup
 
-### Then create a firebaseConfig.js and paste your firebase configs:
+### Then edit firebaseConfig.js and paste your firebase configs:
 
 ```javascript
 export default {
